@@ -13,7 +13,7 @@ Script that exports perforamnce reports for all the powered on vms (CPU, Memory)
 ## Configuration
 In order to set the days for the monitor change the variable $dates_to_check. By default is 10 days/
 ```powershell
-$dates_to_check ="-10"
+ $nsamples = 31
 ```
 
 To save the excel file to some specific folder modify the following variable
