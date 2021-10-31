@@ -1,4 +1,4 @@
-# Virtual Machine Performance Statistics Report per Cluster
+# Virtual Machine Performance Graphs for CPU and Memory usage per Cluster
 
 ## Scope:
 Script that exports perforamnce reports for all the powered on vms (CPU, Memory) and creates an excel file with performance tabs per cluster.
