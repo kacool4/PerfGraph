@@ -33,10 +33,11 @@ For sending the result file via e-mail you will need to have the SMTP ip to be s
  PS> C:\PerfGraph.ps1 
  ```
 
-![Alt text](/screenshot/tab1.jpg?raw=true "Main Usage")
+![Alt text](/screenshot/chart.jpg?raw=true "Main Usage")
  
-![Alt text](/screenshot/tab2.jpg?raw=true "CPU Usage")
+![Alt text](/screenshot/cpu.jpg?raw=true "CPU Usage")
 
+![Alt text](/screenshot/memory.jpg?raw=true "Memory Usage")
 ## Frequetly Asked Questions:
 * When I am executing the script it gives you an error "vCenter not found".
    > Before you execute the script you need first to be connected on a vCenter Server.
