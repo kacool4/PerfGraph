@@ -3,7 +3,6 @@
 ########################################################################
 
 # $vCenter = Read-Host "Enter the vCenter name wherein the target cluster resides"
-# $list = Read-Host "Enter path to text file that contains list of VMs to which performance report need to be grabbed"
  
  $vms_pwrod = Get-VM | Where-Object {$_.PowerState -eq "PoweredOn"} | select Name
  $sdate = '08/01/2021'  
@@ -28,12 +27,7 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
 # CPU and Mem average...
 #========================================================================
 
-#foreach($VM in $VMs)
-#    {
-
  foreach ($cluster in $clusters) {
-
-
    foreach ($vm_name in $vm_name) {
 
      Write-Host "Collecting data for $vm_name …"
@@ -122,8 +116,7 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
      $wsData.Name = $clusterNoD
      $wsData.Cells.Item(1,1) = 'No data for the following VMs'
 
-
-    # $wb.SaveAs("C:\ibm_apar\PerfGraph\PerfResult.xlsx",51)
+   # ======== Save Excel file and quit ====================================
      $wb.Save();
      $excel.Quit()
 
