@@ -16,7 +16,7 @@
  [int]$a = 1
  [int]$b = 1
  $vms_xls = 1 
- $nodata='No data'
+ $nodata ="There are no Data for the following vms for the last 31 days"
  $nodatavm = 0
  $VMs = $vms_pwrod.name
  $stats = @()
@@ -129,13 +129,6 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
        $b+=$range_days
    } While ($vms_xls -le $number_vm)
 
-
-
-   #======= No data Workbook fix =================================================== 
-     $clusterNoD = $wkcluster+" No Data"
-     $wsData = $wb.WorkSheets.item(3) 
-     $wsData.Name = $clusterNoD
-     $wsData.Cells.Item(1,1) = 'No data for the following VMs'
 
    # ======== Save Excel file and quit ====================================
      $wb.Save();
