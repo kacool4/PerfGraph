@@ -11,12 +11,11 @@
 
  $fdate = Get-Date
  $sdate = $fdate.AddDays(-$range_days)
-
+ $nodata ="There are no Data for the following vms for the last 31 days"
  $nsamples = 31
  [int]$a = 1
  [int]$b = 1
  $vms_xls = 1 
- $nodata ="There are no Data for the following vms for the last 31 days"
  $nodatavm = 0
  $VMs = $vms_pwrod.name
  $stats = @()
@@ -92,14 +91,14 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
    #=======Put VM and CPU on every line======================================
    
    Do {
-
+       $wsData.Cells.Item($a,1).Interior.ColorIndex = 15
        $wsData.Cells.Item($a,1) = 'VM name'
-       $b++
+       $wsData.Cells.Item($a,2).Interior.ColorIndex = 15
        $wsData.Cells.Item($a,2) = 'Dated'
+       $wsData.Cells.Item($a,3).Interior.ColorIndex = 15
        $wsData.Cells.Item($a,3) = 'CPU %'
        $vms_xls++
        $a+=$range_days
-       $b+=$range_days
    } While ($vms_xls -le $number_vm)
 
       
@@ -110,7 +109,6 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
      
      # Reset values    
      $a = 1
-     $b = 1
      $vms_xls = 1 
     
 
@@ -120,13 +118,14 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
     #=========================================================================
    
     Do {
+       $wsData.Cells.Item($a,1).Interior.ColorIndex = 31
        $wsData.Cells.Item($a,1) = 'VM name'
-       $b++
+       $wsData.Cells.Item($a,2).Interior.ColorIndex = 31
        $wsData.Cells.Item($a,2) = 'Dated'
+       $wsData.Cells.Item($a,3).Interior.ColorIndex = 31
        $wsData.Cells.Item($a,3) = 'Memory %'
        $vms_xls++
        $a+=$range_days
-       $b+=$range_days
    } While ($vms_xls -le $number_vm)
 
 
@@ -163,7 +162,6 @@ $vnm = 2
 
 # Adding a new sheet where the chart would be created
 $wsChart = $wb.Sheets.Add();
-$wkcluster
 $wsChart.Name = $wkcluster
 
 #========================================================================= 
