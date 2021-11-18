@@ -5,13 +5,17 @@
 # $vCenter = Read-Host "Enter the vCenter name wherein the target cluster resides"
  
  $vms_pwrod = Get-VM | Where-Object {$_.PowerState -eq "PoweredOn"} | select Name
- $sdate = '08/01/2021'  
- $fdate = '09/01/2021'
+
+
+ $range_days = 32
+
+ $fdate = Get-Date
+ $sdate = $fdate.AddDays(-$range_days)
+
  $nsamples = 31
  [int]$a = 1
  [int]$b = 1
  $vms_xls = 1 
- $Addtitle = $nsamples + 1
  $nodata='No data'
  $nodatavm = 0
  $VMs = $vms_pwrod.name
@@ -28,27 +32,41 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
 #========================================================================
 
  foreach ($cluster in $clusters) {
-   foreach ($vm_name in $vm_name) {
+   
+   $wkcluster = ($cluster | select Name).Name
+    
+   
+   $nodata | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Cpu"
+   $nodata | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Memory"
+   $nodata | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" No Data"
 
+   foreach ($vm_name in $vm_name) {
+     
      Write-Host "Collecting data for $vm_name …"
-     $wkcluster = ($cluster | select Name).Name
+    
       ## ===  Gather CPU average use =================== 
      $stats = Get-Stat –Entity $vm_name  -Stat 'cpu.usage.average' –Start $sdate –Finish $fdate 
-     if (!$stats) {
-         $stats+= $vm_name.Name+"`r"   
-         $stats+= $stats| Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" No Data"
+     $count = $stats.Count
+
+     if ($count -lt 30) {
+         $nodata= $vm_name.Name   
+         $nodata+= $nodata| Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" No Data"
          $nodatavm++
      }else {
-       $stats +=""
-       $stats = $stats | Select Entity,Timestamp,Value |Sort Timestamp -Verbose| Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Cpu"
-     }
+       $stats +="`n" | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Cpu"
+       $stats +="`r" | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Cpu"
+       $stats += $stats | Select Entity,Timestamp,Value |Sort Timestamp -Verbose| Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Cpu"
+       
      ## ===  Gather Memory average use =================== 
-     $stats_mem = Get-Stat –Entity $vm_name -Stat 'mem.usage.average' –Start $sdate –Finish $fdate 
-     $stats_mem +=""
-     $stats_mem = $stats_mem | Select Entity,Timestamp,Value |Sort Timestamp -Verbose | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Memory"
-  
+        $stats_mem = Get-Stat –Entity $vm_name -Stat 'mem.usage.average' –Start $sdate –Finish $fdate 
+        $stats_mem += "`n" | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Memory"
+        $stats_mem += "`r" | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Memory"
+        $stats_mem += $stats_mem | Select Entity,Timestamp,Value |Sort Timestamp -Verbose | Export-Excel -Append –Path .\PerfResult.xlsx -WorksheetName $wkcluster" Memory"
+     }    
      $number_vm++ 
-     $stats =""
+     $stats = ""
+     $stats_mem = ""
+     $nodata = ""
       
  }
 
@@ -68,18 +86,20 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
     
    #=======Delete the first row =============================================
      $wsData.Cells.Item(1,1).EntireRow.Delete()
+     $wsData.Cells.Item(1,2).EntireRow.Delete()
    
  
    #=======Put VM and CPU on every line======================================
    
-    Do {
+   Do {
+
        $wsData.Cells.Item($a,1) = 'VM name'
        $b++
        $wsData.Cells.Item($a,2) = 'Dated'
        $wsData.Cells.Item($a,3) = 'CPU %'
        $vms_xls++
-       $a+=$Addtitle
-       $b+=$Addtitle
+       $a+=$range_days
+       $b+=$range_days
    } While ($vms_xls -le $number_vm)
 
       
@@ -96,6 +116,7 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
 
     #=======Delete the first row =============================================
      $wsData.Cells.Item(1,1).EntireRow.Delete()
+     $wsData.Cells.Item(1,2).EntireRow.Delete()
     #=========================================================================
    
     Do {
@@ -104,8 +125,8 @@ $vm_name = Get-Cluster $clusters | Get-VM| Where-Object PowerState -eq PoweredOn
        $wsData.Cells.Item($a,2) = 'Dated'
        $wsData.Cells.Item($a,3) = 'Memory %'
        $vms_xls++
-       $a+=$Addtitle
-       $b+=$Addtitle
+       $a+=$range_days
+       $b+=$range_days
    } While ($vms_xls -le $number_vm)
 
 
@@ -225,7 +246,7 @@ $loops+=1
 $a+=$nsamples+1
 $b+=$nsamples+1
 $chart_No+=1
-$vnm += $Addtitle
+$vnm += $range_days
 
 } While ($loops -le $total)
 #========================================================================= 
