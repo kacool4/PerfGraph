@@ -32,12 +32,28 @@ For sending the result file via e-mail you will need to have the SMTP ip to be s
  # make sure to change the directory in case you are not running the script from C:\
  PS> C:\PerfGraph.ps1 
  ```
+The script will run and create 4 tabs for each Cluster. 
+
+- Chart 
+  Will give you graphs for Cpu and memory for all the vms that have performnce data for the given timeframe
 
 ![Alt text](/screenshot/chart.jpg?raw=true "Main Usage")
  
+
+- CPU 
+  Will give you data for Cpu average usage for all the vms that have performnce data , on the given timeframe, each day
+
 ![Alt text](/screenshot/cpu.jpg?raw=true "CPU Usage")
 
+- Memory 
+  Will give you data for memory average usage for all the vms that have performnce data, on the given timeframe, each day
+
 ![Alt text](/screenshot/memory.jpg?raw=true "Memory Usage")
+
+- No Data 
+  You will find all the VMs that have perfomance data less than given timeframe. Those Vms are skipped.
+
+![Alt text](/screenshot/nodata.jpg?raw=true "VMs with No data during the timeframe")
 ## Frequetly Asked Questions:
 * When I am executing the script it gives you an error "vCenter not found".
    > Before you execute the script you need first to be connected on a vCenter Server.
